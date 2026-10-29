@@ -1,1 +1,111 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Up or Down Signal</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#06111f;color:white;font-family:Arial,sans-serif}
+header{padding:22px;text-align:center;background:#0b1e33;border-bottom:1px solid #174064}
+header h2{margin:0;color:#168cff}
+main{max-width:480px;margin:35px auto;padding:18px}
+.card{background:#0c2036;border:1px solid #214361;border-radius:18px;padding:24px}
+h1{text-align:center;font-size:32px;margin:5px 0 10px}
+.sub{text-align:center;color:#a9bfd8;line-height:1.5}
+label{display:block;margin:22px 0 9px;font-weight:bold}
+input,select{width:100%;padding:15px;border-radius:10px;border:1px solid #31516e;background:#061525;color:white;font-size:17px}
+button{width:100%;padding:16px;margin-top:15px;border:0;border-radius:10px;background:#087ff2;color:white;font-size:17px;font-weight:bold;cursor:pointer}
+.result{margin-top:22px;padding:20px;text-align:center;background:#061525;border-radius:13px}
+.direction{font-size:38px;font-weight:bold;margin:12px}
+.up{color:#20d69b}.down{color:#ff737d}
+.percent{font-size:27px;font-weight:bold}
+.bar{height:10px;background:#263b50;border-radius:20px;margin:14px 0;overflow:hidden}
+.fill{height:100%;width:0;background:#0788ff;transition:width .4s}
+.small{font-size:13px;color:#a9bfd8;line-height:1.6}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.stat{padding:14px;background:#102943;border-radius:10px;text-align:center}
+.stat small{display:block;color:#a9bfd8;margin-bottom:8px}
+.stat strong{font-size:17px}
+.warning{font-size:12px;line-height:1.6;color:#f0d49b;background:#282315;padding:12px;border-radius:9px;margin-top:18px}
+footer{text-align:center;padding:22px;color:#8ca5c0;font-size:12px}
+</style>
+</head>
+<body>
+<header><h2>⬆ UP OR DOWN ⬇</h2></header>
+<main>
+<div class="card">
+<h1>Multiplier Signal</h1>
+<p class="sub">Enter the previous multiplier to view an UP/DOWN indicator.</p>
+
+<label for="last">Previous multiplier</label>
+<input id="last" type="number" min="1" step="0.01" placeholder="Example: 1.45">
+
+<label for="time">How long should I wait?</label>
+<select id="time">
+<option value="5">5 seconds</option>
+<option value="10" selected>10 seconds</option>
+<option value="15">15 seconds</option>
+<option value="30">30 seconds</option>
+</select>
+
+<button id="analyze">GENERATE INDICATOR</button>
+
+<div class="result" aria-live="polite">
+<div class="small">INDICATOR</div>
+<div id="direction" class="direction">—</div>
+<div id="percent" class="percent">—%</div>
+<div class="bar"><div id="fill" class="fill"></div></div>
+<div id="message" class="small">Enter a multiplier to begin.</div>
+</div>
+
+<div class="stats">
+<div class="stat"><small>Suggested wait</small><strong id="wait">—</strong></div>
+<div class="stat"><small>Last multiplier</small><strong id="shown">—</strong></div>
+</div>
+
+<div class="warning">
+Important: This indicator cannot predict the next crash-game result. The percentage is a display score, not a real probability of winning. Waiting does not make a round safer.
+</div>
+</div>
+</main>
+<footer>Up or Down Signal · For entertainment only</footer>
+
+<script>
+const last = document.getElementById("last");
+
+document.getElementById("analyze").addEventListener("click", function(){
+  const value = Number(last.value);
+
+  if(last.value.trim()==="" || !Number.isFinite(value) || value<1){
+    document.getElementById("direction").textContent="—";
+    document.getElementById("percent").textContent="—%";
+    document.getElementById("fill").style.width="0%";
+    document.getElementById("message").textContent="Enter a valid multiplier of 1.00 or higher.";
+    document.getElementById("wait").textContent="—";
+    document.getElementById("shown").textContent="—";
+    return;
+  }
+
+  // This is only a simple display rule, not a prediction.
+  const direction = value < 2 ? "UP" : "DOWN";
+  const score = Math.min(65, Math.round(50 + Math.abs(value - 2) * 3));
+
+  const dir = document.getElementById("direction");
+  dir.textContent = direction === "UP" ? "⬆ UP" : "⬇ DOWN";
+  dir.className = "direction " + direction.toLowerCase();
+
+  document.getElementById("percent").textContent =
+    score + "% indicator score";
+  document.getElementById("fill").style.width = score + "%";
+  document.getElementById("message").textContent =
+    "Based on a simple rule using your last multiplier. The next result remains unknown.";
+  document.getElementById("wait").textContent =
+    document.getElementById("time").value + " seconds";
+  document.getElementById("shown").textContent = value.toFixed(2) + "x";
+});
+</script>
+</body>
+</html>
+
