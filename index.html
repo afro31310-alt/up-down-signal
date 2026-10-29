@@ -4,79 +4,133 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Up or Down</title>
+<title>Up or Down Signal</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#203324;font-family:Arial,sans-serif}
+body{margin:0;background:#203324;font-family:Arial,sans-serif;color:#f5e7d2}
 .game{
- width:100%;max-width:450px;min-height:100vh;margin:auto;
- padding:22px 18px 35px;text-align:center;color:#eee0c9;
- background:repeating-linear-gradient(0deg,#402719 0,#573521 18px,#29190f 20px,#63402a 39px);
- box-shadow:0 0 30px #0008;
+ max-width:450px;min-height:100vh;margin:auto;padding:22px 18px 35px;
+ text-align:center;background:repeating-linear-gradient(0deg,#402719 0,#573521 18px,#29190f 20px,#63402a 39px);
+ box-shadow:0 0 30px #0008
 }
-.wheel{
- width:min(74vw,285px);height:min(74vw,285px);
- margin:0 auto;position:relative;border-radius:50%;
- border:9px solid #b87943;
- outline:2px solid #e2a56b;
- box-shadow:0 4px 0 #62371c,0 8px 18px #0008;
- overflow:hidden;
-}
-.up,.down{
- position:absolute;left:3%;width:94%;height:49%;
- display:flex;align-items:center;justify-content:center;
- font-size:38px;font-weight:900;color:#f3e4b9;
- text-shadow:0 2px 3px #60451c;
-}
+.page{display:none}.page.active{display:block}
+.brand{font-size:24px;font-weight:900;margin:8px 0 22px;color:#ffe0ad}
+.intro{font-size:15px;line-height:1.5;color:#e2cdb0}
+label{display:block;text-align:left;font-size:14px;font-weight:bold;margin:20px 0 8px}
+input{width:100%;padding:15px;border-radius:10px;border:2px solid #c6a078;background:#f7ebd7;color:#2b1a0e;font-size:17px}
+.action{width:100%;min-height:58px;margin-top:18px;border:3px solid #d2c8b8;border-radius:14px;background:linear-gradient(#b17b2d,#8a5a20);color:#fff0d5;font-size:19px;font-weight:900;cursor:pointer}
+.small{font-size:12px;color:#e4ceb0;line-height:1.6;margin-top:15px}
+.error{color:#ffe0a0;font-size:13px;margin-top:10px}
+.wheel{width:min(74vw,285px);height:min(74vw,285px);margin:0 auto;position:relative;border-radius:50%;border:9px solid #b87943;outline:2px solid #e2a56b;box-shadow:0 4px 0 #62371c,0 8px 18px #0008;overflow:hidden}
+.up,.down{position:absolute;left:3%;width:94%;height:49%;display:flex;align-items:center;justify-content:center;font-size:38px;font-weight:900;color:#f3e4b9;text-shadow:0 2px 3px #60451c}
 .up{top:2%;background:radial-gradient(#79b900,#4d8d00);border-radius:150px 150px 0 0}
 .down{bottom:2%;background:radial-gradient(#ffb52c,#d68108);border-radius:0 0 150px 150px}
 .line{position:absolute;top:49%;left:0;width:100%;height:5px;background:#f5dfbd;z-index:2}
 .bottle-box{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:3;pointer-events:none}
-.bottle{font-size:110px;transform:rotate(90deg);filter:drop-shadow(0 5px 3px #0009)}
+.bottle{font-size:105px;transform:rotate(90deg);filter:drop-shadow(0 5px 3px #0009)}
 .bottle.spin{animation:spin 3s cubic-bezier(.12,.72,.12,1) forwards}
 @keyframes spin{from{transform:rotate(90deg)}to{transform:rotate(1890deg)}}
-.note{font-size:14px;font-weight:bold;color:#d7c5ad;margin:18px 0 0;text-shadow:0 2px 3px #000}
-#result{
- width:100%;height:120px;margin-top:108px;
- border:10px solid #cfc7ba;border-radius:20px;
- background:linear-gradient(#b17b2d,#8a5a20);
- box-shadow:inset 0 4px 10px #4a2a0e;
- color:#f6e5c9;font-size:42px;font-weight:900;
- cursor:pointer;
-}
-#result:disabled{opacity:.9}
-#message{font-size:14px;color:#f0dfc4;margin-top:18px;min-height:20px}
+.note{font-size:14px;font-weight:bold;color:#d7c5ad;margin:18px 0 0}
+#result{width:100%;height:105px;margin-top:65px;border:10px solid #cfc7ba;border-radius:20px;background:linear-gradient(#b17b2d,#8a5a20);box-shadow:inset 0 4px 10px #4a2a0e;color:#f6e5c9;font-size:36px;font-weight:900;cursor:pointer}
+#result:disabled{opacity:.8}
+.signal{display:none;margin-top:16px;padding:17px;background:#342416;border:1px solid #c59a65;border-radius:12px}
+.signal.show{display:block}
+.percent{font-size:30px;font-weight:900;margin:9px}
+.bar{height:10px;background:#60472f;border-radius:20px;overflow:hidden}
+.fill{height:100%;width:0;background:#8ac52a;transition:width .4s}
+#message{font-size:14px;color:#f0dfc4;margin-top:14px;min-height:20px}
+.account-badge{font-size:12px;color:#ecd2a9;margin-bottom:12px;overflow-wrap:anywhere}
 </style>
 </head>
 <body>
 <div class="game">
+
+<section class="page active" id="accountPage">
+ <div class="brand">🍾 UP OR DOWN</div>
+ <h1>Welcome</h1>
+ <p class="intro">Enter your SportyBet account number to continue.</p>
+
+ <form id="accountForm">
+  <label for="account">SportyBet account number</label>
+  <input id="account" type="text" inputmode="numeric"
+   maxlength="30" placeholder="Enter account number" required>
+  <button class="action" type="submit">CONTINUE</button>
+  <div class="error" id="error"></div>
+ </form>
+
+ <p class="small">Your account number is used only to label your session on this page. This does not verify your SportyBet account. Never enter your password, PIN or payment details.</p>
+</section>
+
+<section class="page" id="gamePage">
+ <div class="brand">🍾 UP OR DOWN</div>
+ <div class="account-badge" id="accountLabel"></div>
+
  <div class="wheel">
   <div class="up">UP</div>
   <div class="down">DOWN</div>
   <div class="line"></div>
-  <div class="bottle-box">
-   <div class="bottle" id="bottle">🍾</div>
-  </div>
+  <div class="bottle-box"><div class="bottle" id="bottle">🍾</div></div>
  </div>
 
  <div class="note">PASS 2X / Lose if bottle stops at MIDDLE</div>
+ <button id="result">GENERATE SIGNAL</button>
 
- <button id="result">SPIN</button>
- <div id="message">Tap SPIN to start</div>
+ <div class="signal" id="signal">
+  <div>INDICATOR SCORE</div>
+  <div class="percent" id="percent">—%</div>
+  <div class="bar"><div class="fill" id="fill"></div></div>
+  <p class="small" id="percentNote">Display score only.</p>
+ </div>
+
+ <div id="message">Tap Generate Signal to spin the bottle.</div>
+ <button class="action" id="changeAccount">CHANGE ACCOUNT</button>
+ <p class="small">UP/DOWN is selected randomly. The percentage is not a reliable prediction of an Aviator or other crash-game result.</p>
+</section>
+
 </div>
 
 <script>
+const accountForm=document.getElementById("accountForm");
+const accountInput=document.getElementById("account");
+const accountPage=document.getElementById("accountPage");
+const gamePage=document.getElementById("gamePage");
+
+accountForm.addEventListener("submit",function(e){
+ e.preventDefault();
+ const account=accountInput.value.trim();
+
+ if(!account){
+  document.getElementById("error").textContent="Please enter your account number.";
+  return;
+ }
+
+ document.getElementById("error").textContent="";
+ document.getElementById("accountLabel").textContent="SportyBet account: "+account;
+ accountPage.classList.remove("active");
+ gamePage.classList.add("active");
+});
+
+document.getElementById("changeAccount").addEventListener("click",function(){
+ gamePage.classList.remove("active");
+ accountPage.classList.add("active");
+ accountInput.value="";
+});
+
 const bottle=document.getElementById("bottle");
 const button=document.getElementById("result");
+const signal=document.getElementById("signal");
 const message=document.getElementById("message");
+
 let busy=false;
 
-button.addEventListener("click",()=>{
+button.addEventListener("click",function(){
  if(busy)return;
+
  busy=true;
  button.disabled=true;
  button.textContent="SPINNING...";
  message.textContent="Bottle is spinning...";
+ signal.classList.remove("show");
 
  bottle.classList.remove("spin");
  bottle.style.transform="rotate(90deg)";
@@ -84,8 +138,9 @@ button.addEventListener("click",()=>{
  bottle.classList.add("spin");
 
  const outcome=Math.random()<0.5?"UP":"DOWN";
+ const score=50+Math.floor(Math.random()*46);
 
- setTimeout(()=>{
+ setTimeout(function(){
   bottle.classList.remove("spin");
   bottle.style.transform=outcome==="UP"?"rotate(0deg)":"rotate(180deg)";
 
@@ -94,7 +149,14 @@ button.addEventListener("click",()=>{
    ?"linear-gradient(#70a91a,#467a08)"
    :"linear-gradient(#c0872c,#8a5a20)";
 
-  message.textContent="Result: "+outcome;
+  document.getElementById("percent").textContent=score+"%";
+  document.getElementById("fill").style.width=score+"%";
+  document.getElementById("percentNote").textContent=
+   "Random display score — not a real probability of winning.";
+
+  signal.classList.add("show");
+  message.textContent="Signal generated: "+outcome;
+
   busy=false;
   button.disabled=false;
  },3000);
