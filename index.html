@@ -3,169 +3,101 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Up or Down Signal</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Up or Down</title>
 <style>
 *{box-sizing:border-box}
-body{
- margin:0;background:radial-gradient(circle at top,#123b60,#06111f 65%);
- color:#fff;font-family:Arial,sans-serif;min-height:100vh
+body{margin:0;background:#203324;font-family:Arial,sans-serif}
+.game{
+ width:100%;max-width:450px;min-height:100vh;margin:auto;
+ padding:22px 18px 35px;text-align:center;color:#eee0c9;
+ background:repeating-linear-gradient(0deg,#402719 0,#573521 18px,#29190f 20px,#63402a 39px);
+ box-shadow:0 0 30px #0008;
 }
-header{
- padding:22px;text-align:center;background:#081a2d;
- border-bottom:1px solid #214361;font-size:24px;font-weight:bold
+.wheel{
+ width:min(74vw,285px);height:min(74vw,285px);
+ margin:0 auto;position:relative;border-radius:50%;
+ border:9px solid #b87943;
+ outline:2px solid #e2a56b;
+ box-shadow:0 4px 0 #62371c,0 8px 18px #0008;
+ overflow:hidden;
 }
-header span{color:#0788ff}
-main{max-width:480px;margin:30px auto;padding:18px}
-.card{
- background:#0b2036;border:1px solid #214361;
- border-radius:20px;padding:24px;text-align:center;
- box-shadow:0 15px 40px #0005
+.up,.down{
+ position:absolute;left:3%;width:94%;height:49%;
+ display:flex;align-items:center;justify-content:center;
+ font-size:38px;font-weight:900;color:#f3e4b9;
+ text-shadow:0 2px 3px #60451c;
 }
-h1{font-size:32px;margin:5px 0 10px}
-.subtitle{color:#adc3dc;line-height:1.5}
-.bottle-area{
- height:220px;display:flex;align-items:center;
- justify-content:center;margin:20px 0
+.up{top:2%;background:radial-gradient(#79b900,#4d8d00);border-radius:150px 150px 0 0}
+.down{bottom:2%;background:radial-gradient(#ffb52c,#d68108);border-radius:0 0 150px 150px}
+.line{position:absolute;top:49%;left:0;width:100%;height:5px;background:#f5dfbd;z-index:2}
+.bottle-box{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:3;pointer-events:none}
+.bottle{font-size:110px;transform:rotate(90deg);filter:drop-shadow(0 5px 3px #0009)}
+.bottle.spin{animation:spin 3s cubic-bezier(.12,.72,.12,1) forwards}
+@keyframes spin{from{transform:rotate(90deg)}to{transform:rotate(1890deg)}}
+.note{font-size:14px;font-weight:bold;color:#d7c5ad;margin:18px 0 0;text-shadow:0 2px 3px #000}
+#result{
+ width:100%;height:120px;margin-top:108px;
+ border:10px solid #cfc7ba;border-radius:20px;
+ background:linear-gradient(#b17b2d,#8a5a20);
+ box-shadow:inset 0 4px 10px #4a2a0e;
+ color:#f6e5c9;font-size:42px;font-weight:900;
+ cursor:pointer;
 }
-.bottle{
- font-size:120px;display:inline-block;
- transform-origin:center;filter:drop-shadow(0 8px 10px #0008)
-}
-.bottle.spinning{animation:spin 2.5s cubic-bezier(.15,.7,.2,1) forwards}
-@keyframes spin{
- from{transform:rotate(0deg)}
- to{transform:rotate(1800deg)}
-}
-button{
- width:100%;padding:17px;margin-top:12px;
- border:0;border-radius:12px;
- background:linear-gradient(100deg,#0788ff,#075fe0);
- color:white;font-size:18px;font-weight:bold;cursor:pointer
-}
-button:disabled{opacity:.6;cursor:wait}
-.result{
- margin-top:22px;padding:20px;background:#061525;
- border-radius:14px;border:1px solid #23425f
-}
-.label{font-size:12px;letter-spacing:2px;color:#a9bfd8}
-.direction{font-size:42px;font-weight:900;margin:12px}
-.up{color:#20d69b}.down{color:#ff737d}
-.percent{font-size:26px;font-weight:bold}
-.bar{height:10px;background:#24394e;border-radius:20px;
- overflow:hidden;margin:14px 0}
-.fill{height:100%;width:0;background:#0788ff;transition:width .5s}
-.details{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
-.detail{padding:14px;background:#102943;border-radius:10px}
-.detail small{display:block;color:#a9bfd8;margin-bottom:8px}
-.detail strong{font-size:17px}
-.note{margin-top:18px;font-size:12px;color:#a9bfd8;line-height:1.6}
-footer{text-align:center;color:#8ba6c4;padding:20px;font-size:12px}
+#result:disabled{opacity:.9}
+#message{font-size:14px;color:#f0dfc4;margin-top:18px;min-height:20px}
 </style>
 </head>
 <body>
-<header>🍾 <span>UP</span> OR DOWN</header>
+<div class="game">
+ <div class="wheel">
+  <div class="up">UP</div>
+  <div class="down">DOWN</div>
+  <div class="line"></div>
+  <div class="bottle-box">
+   <div class="bottle" id="bottle">🍾</div>
+  </div>
+ </div>
 
-<main>
-<div class="card">
-<h1>Generate Signal</h1>
-<p class="subtitle">
-Tap the button and watch the bottle spin to select UP or DOWN.
-</p>
+ <div class="note">PASS 2X / Lose if bottle stops at MIDDLE</div>
 
-<div class="bottle-area">
-<div class="bottle" id="bottle">🍾</div>
+ <button id="result">SPIN</button>
+ <div id="message">Tap SPIN to start</div>
 </div>
-
-<button id="generate">🍾 GENERATE SIGNAL</button>
-
-<div class="result" aria-live="polite">
-<div class="label">YOUR SIGNAL</div>
-<div id="direction" class="direction">READY</div>
-<div id="percent" class="percent">—%</div>
-<div class="bar"><div class="fill" id="fill"></div></div>
-<div class="label" id="message">Tap Generate Signal to begin</div>
-</div>
-
-<div class="details">
-<div class="detail">
-<small>Suggested wait</small>
-<strong id="wait">—</strong>
-</div>
-<div class="detail">
-<small>Signal number</small>
-<strong id="number">0</strong>
-</div>
-</div>
-
-<p class="note">
-The result is randomly selected. The percentage is a display score,
-not a real probability of winning. It cannot predict the next
-Aviator or crash-game result.
-</p>
-</div>
-</main>
-
-<footer>UP OR DOWN · Play responsibly</footer>
 
 <script>
 const bottle=document.getElementById("bottle");
-const button=document.getElementById("generate");
-const direction=document.getElementById("direction");
-const percent=document.getElementById("percent");
-const fill=document.getElementById("fill");
+const button=document.getElementById("result");
 const message=document.getElementById("message");
-const wait=document.getElementById("wait");
-const number=document.getElementById("number");
+let busy=false;
 
-let spinning=false;
-let totalSignals=0;
-let rotation=0;
-
-button.addEventListener("click",function(){
- if(spinning)return;
-
- spinning=true;
+button.addEventListener("click",()=>{
+ if(busy)return;
+ busy=true;
  button.disabled=true;
- direction.textContent="SPINNING...";
- direction.className="direction";
- percent.textContent="—%";
- fill.style.width="0%";
- message.textContent="Generating your signal...";
- wait.textContent="Calculating...";
- bottle.classList.remove("spinning");
+ button.textContent="SPINNING...";
+ message.textContent="Bottle is spinning...";
 
- // Reset animation before starting the next spin.
- bottle.style.transform="rotate("+rotation+"deg)";
+ bottle.classList.remove("spin");
+ bottle.style.transform="rotate(90deg)";
  void bottle.offsetWidth;
+ bottle.classList.add("spin");
 
- bottle.classList.add("spinning");
- rotation+=1800;
-
- // Randomly choose the result after the animation.
  const outcome=Math.random()<0.5?"UP":"DOWN";
 
- // A separate display score, not a probability of winning.
- const score=50+Math.floor(Math.random()*46);
+ setTimeout(()=>{
+  bottle.classList.remove("spin");
+  bottle.style.transform=outcome==="UP"?"rotate(0deg)":"rotate(180deg)";
 
- setTimeout(function(){
-  bottle.classList.remove("spinning");
-  bottle.style.transform="rotate("+rotation+"deg)";
+  button.textContent=outcome;
+  button.style.background=outcome==="UP"
+   ?"linear-gradient(#70a91a,#467a08)"
+   :"linear-gradient(#c0872c,#8a5a20)";
 
-  direction.textContent=outcome==="UP"?"⬆ UP":"⬇ DOWN";
-  direction.className="direction "+outcome.toLowerCase();
-
-  percent.textContent=score+"%";
-  fill.style.width=score+"%";
-  message.textContent="Signal generated!";
-  wait.textContent="10 seconds";
-
-  totalSignals++;
-  number.textContent=totalSignals;
-
-  spinning=false;
+  message.textContent="Result: "+outcome;
+  busy=false;
   button.disabled=false;
- },2500);
+ },3000);
 });
 </script>
 </body>
